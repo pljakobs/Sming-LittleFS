@@ -305,7 +305,11 @@ FileHandle FileSystem::open(const char* path, OpenFlags flags)
 	for(unsigned i = 0; i < LFS_MAX_FDS; ++i) {
 		auto& fd = fileDescriptors[i];
 		if(!fd) {
-			fd.reset(new FileDescriptor);
+			auto newFd= new FileDescriptor;
+			if (!newFd){
+				return Error::NoMem;
+			}
+			fd.reset(newFd);
 			file = LFS_HANDLE_MIN + i;
 			break;
 		}
